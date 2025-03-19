@@ -22,7 +22,6 @@ class UpdateCommand(CreateCommand):
         update_support: bool,
         update_stub: bool,
         test_mode: bool,
-        remote_debugger: str | None,
         **options,
     ) -> dict | None:
         """Update an existing application bundle.
@@ -33,7 +32,6 @@ class UpdateCommand(CreateCommand):
         :param update_support: Should app support be updated?
         :param update_stub: Should stub binary be updated?
         :param test_mode: Should the app be updated in test mode?
-        :param remote_debugger: Remote debugger that should be used.
         """
 
         if not self.bundle_path(app).exists():
@@ -43,17 +41,13 @@ class UpdateCommand(CreateCommand):
             return
 
         self.verify_app(app)
-        self.console.print(f"{remote_debugger=}")
-        debugger = self.create_debugger(remote_debugger)
 
         self.console.info("Updating application code...", prefix=app.app_name)
-        self.install_app_code(app=app, test_mode=test_mode, debugger=debugger)
+        self.install_app_code(app=app, test_mode=test_mode)
 
         if update_requirements:
             self.console.info("Updating requirements...", prefix=app.app_name)
-            self.install_app_requirements(
-                app=app, test_mode=test_mode, debugger=debugger
-            )
+            self.install_app_requirements(app=app, test_mode=test_mode)
 
         if update_resources:
             self.console.info("Updating application resources...", prefix=app.app_name)
@@ -90,12 +84,12 @@ class UpdateCommand(CreateCommand):
         update_support: bool = False,
         update_stub: bool = False,
         test_mode: bool = False,
-        remote_debugger: str | None = None,
+        remote_debugger_cfg: str | None = None,
         **options,
     ) -> dict | None:
         # Confirm host compatibility, that all required tools are available,
         # and that the app configuration is finalized.
-        self.finalize(app)
+        self.finalize(app, remote_debugger_cfg)
 
         if app:
             state = self.update_app(
@@ -105,7 +99,6 @@ class UpdateCommand(CreateCommand):
                 update_support=update_support,
                 update_stub=update_stub,
                 test_mode=test_mode,
-                remote_debugger=remote_debugger,
                 **options,
             )
         else:
@@ -118,7 +111,6 @@ class UpdateCommand(CreateCommand):
                     update_support=update_support,
                     update_stub=update_stub,
                     test_mode=test_mode,
-                    remote_debugger=remote_debugger,
                     **full_options(state, options),
                 )
 

@@ -93,6 +93,7 @@ class BuildCommand(BaseCommand):
         update_stub: bool = False,
         no_update: bool = False,
         test_mode: bool = False,
+        remote_debugger_cfg: str | None = None,
         **options,
     ) -> dict | None:
         # Has the user requested an invalid set of options?
@@ -121,7 +122,7 @@ class BuildCommand(BaseCommand):
 
         # Confirm host compatibility, that all required tools are available,
         # and that the app configuration is finalized.
-        self.finalize(app)
+        self.finalize(app, remote_debugger_cfg)
 
         if app:
             state = self._build_app(
