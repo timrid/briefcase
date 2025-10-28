@@ -50,7 +50,7 @@ jobs:
     strategy:
       matrix:
         subdir:
-        - "."
+        - ""
         - "debugger"
         - "automation"
     uses: timrid/beeware-.github/.github/workflows/python-package-create.yml@no-differentiator-when-subdirectory-is-root
